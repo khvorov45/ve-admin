@@ -106,6 +106,7 @@ simulate_study <- function(..., name = "default") {
 }
 
 # Simualate a TN study from a parameter dictionary
+# Assumes that nms subset from pars_dict are all in one population
 simulate_study_pd <- function(nsam, nms, pars_dict,
                               init_seed = sample.int(.Machine$integer.max, 1)) {
   pars <- pars_dict %>%
@@ -115,6 +116,7 @@ simulate_study_pd <- function(nsam, nms, pars_dict,
       nsam = round(nsam * prop, 0),
       seed = init_seed + row_number() - 1
     )
+  if (nrow(pars) != length(nms)) abort("one row per name in pars_dict")
   true_vals <- pars
   if (length(nms) > 1) {
     pars_total <- pars %>%
@@ -138,6 +140,7 @@ simulate_study_pd <- function(nsam, nms, pars_dict,
   study
 }
 
+# Calculate VE, attach true values
 summarise_study <- function(study) {
   study %>%
     group_by(name, type) %>%
@@ -146,9 +149,157 @@ summarise_study <- function(study) {
     left_join(attr(study, "true_vals"), by = "name")
 }
 
+# Simulate and summarise many studies
+many_studies <- function(nsim, nsam, nms, pars_dict,
+                         init_seed = sample.int(.Machine$integer.max, 1)) {
+  per_sim <- length(nms)
+  future_map_dfr(1:nsim, function(ind) {
+    simulate_study_pd(nsam, nms, pars_dict, init_seed + (ind - 1) * per_sim) %>%
+      summarise_study() %>%
+      mutate(index = ind)
+  })
+}
+
+# Create a table with all possible combinations from var_list
+create_all_combos <- function(var_list, pars_dict) {
+  add_combos <- function(curr, add_vals, add_name) {
+    curr_rows <- nrow(curr)
+    curr %>%
+      slice(rep(1:n(), each = length(add_vals))) %>%
+      mutate(!!sym(add_name) := rep(add_vals, times = curr_rows))
+  }
+  reduce2(
+    var_list, names(var_list), add_combos, .init = tibble(.rows = 1)
+  )
+}
+
+# Vary (multiple) parameters in a population with one group in it
+vary_pars <- function(var_names, vary_table, nsim, nsam, set_name, pars_dict,
+                     init_seed = sample.int(.Machine$integer.max, 1)) {
+  if (length(set_name) > 1) abort("population has to consist of one group")
+  if (any(!var_names %in% names(pars_dict)))
+    abort("some var_names not in pars_dict")
+  needed_vars <- vary_table[names(vary_table) %in% var_names] %>%
+    create_all_combos()
+  pars <- pars_dict %>%
+    filter(name == set_name) %>%
+    select(-var_names) %>%
+    group_split(name) %>%
+    map_dfr(function(.tbl) {
+      if (nrow(.tbl) > 1) abort("one row per name in pars_dict")
+      .tbl %>% slice(rep(1, nrow(needed_vars))) %>% bind_cols(needed_vars)
+    })
+  map_dfr(
+    1:nrow(pars), function(ind) many_studies(
+      nsim, nsam, set_name, slice(pars, ind), init_seed + (ind - 1) * nsim
+    )
+  ) %>% mutate(vary_name = paste(var_names, collapse = "-"))
+}
+
+# Create parameter combinations for multi-group variation
+create_mult <- function(vary_list, nms, pars_dict) {
+  if (length(nms) != 3) abort("nms should be of length 3")
+  pars <- pars_dict %>% filter(name %in% nms)
+  mult <- tibble()
+  for (var_name in names(vary_list)) {
+    if (!var_name %in% names(pars_dict))
+      abort(paste0(var_name, " not in pars_dict"))
+    vals <- vary_list[[var_name]]
+    if (length(vals) != 3) abort("values should be of length 3")
+    entry <- pars
+    entry$vary_par <- var_name
+    eqs <- tibble()
+    lbls <- c("low", "med", "high")
+    for (i in seq_along(lbls)) {
+      all_eq <- mutate(
+        entry, !!sym(var_name) := vals[[i]],
+        vary_type = paste0("all-", lbls[[i]])
+      )
+      eqs <- bind_rows(eqs, all_eq)
+    }
+    lows <- tibble()
+    for (i in 1:3) {
+      one_low <- entry %>%
+        mutate(
+          !!sym(var_name) := if_else(name == nms[[i]], vals[[1]], vals[[3]]),
+          vary_type = paste0(nms[[i]], "-low")
+        )
+      lows <- bind_rows(lows, one_low)
+    }
+    entry <- bind_rows(all_eq, lows)
+    mult <- bind_rows(mult, entry)
+  }
+  mult
+}
+
+# Vary parameters in a multi-group context
+vary_mult <- function(var_names, nsim, nsam, pars_dicts,
+                      init_seed = sample.int(.Machine$integer.max, 1)) {
+  if (is.null(pars_dicts$vary_type)) abort("no vary_type in pars_dicts")
+  if (is.null(pars_dicts$vary_par)) abort("no vary_par in pars_dicts")
+  pars_dicts <- filter(pars_dicts, vary_par %in% var_names)
+  nms <- unique(pars_dicts$name)
+  pars_split <- group_split(pars_dicts, vary_type, vary_par)
+  imap_dfr(
+    pars_split, function(pars, ind) {
+      vary_type <- unique(pars$vary_type)
+      pars$vary_type <- NULL
+      vary_par <- unique(pars$vary_par)
+      pars$vary_par <- NULL
+      many_studies(
+        nsim, nsam, nms, pars, init_seed + (ind - 1) * nsim * length(nms)
+      ) %>% mutate(vary_name = paste0(vary_par, "--", vary_type))
+    }
+  )
+}
+
 # Script ======================================================================
 
-stud <- simulate_study_pd(1e5, c("children", "adults", "elderly"), pars_dict)
-stud <- simulate_study()
-summarise_study(stud)
+nsim <- 5
+pars_dict <- read_csv(file.path(pars_dir, "pars.csv"))
 
+vary_table <- list(
+  pvac = seq(0.05, 0.5, 0.05),
+  pflu = seq(0.05, 0.15, 0.01),
+  ve = seq(0.1, 0.9, 0.1),
+  pnonflu = seq(0.1, 0.3, 0.02),
+  sympt = seq(0.1, 0.9, 0.1),
+  clin = seq(0.1, 0.9, 0.1),
+  test_clin = seq(0.1, 0.9, 0.1),
+  test_nonclin = seq(0, 0.3, 0.05),
+  sens_vac = seq(0.9, 1, 0.01),
+  spec_vac = seq(0.5, 1, 0.05),
+  sens_flu = seq(0.5, 1, 0.05),
+  spec_flu = seq(0.9, 1, 0.01)
+)
+
+vary_table_mult <- create_mult(
+  list(
+    prop = c(0.33, 0.7, 0.15),
+    pvac = c(0.05, 0.3, 0.5),
+    pflu = c(0.05, 0.1, 0.15),
+    ve = c(0.15, 0.33, 0.7),
+    pnonflu = c(0.1, 0.15, 0.3),
+    sympt = c(0.1, 0.5, 0.9),
+    clin = c(0.1, 0.5, 0.9),
+    test_clin = c(0.1, 0.5, 0.9),
+    test_nonclin = c(0, 0.15, 0.3),
+    sens_vac = c(0.9, 0.95, 1),
+    spec_vac = c(0.5, 0.75, 1),
+    sens_flu = c(0.5, 0.75, 1),
+    spec_flu = c(0.9, 0.95, 1)
+  ),
+  c("children", "adults", "elderly"),
+  pars_dict
+)
+
+# Next - run in bulk (e.g. vary many parameters but not at the same time)
+
+sims_onegroup <- map_dfr(
+  pars_dict$name,
+  ~ vary_pars("pvac", vary_table, nsim, 1e5, .x, pars_dict, 20191115)
+)
+
+write_csv(
+  sims_onegroup, file.path(sim_dir, paste0("onegroup-", nsim, "sims.csv"))
+)

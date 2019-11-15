@@ -119,7 +119,7 @@ test_that("ve caclulations work", {
   )
 })
 
-test_that("study simulation works", {
+test_that("study simulation and summary work", {
   stud_one <- simulate_study()
   stud_one_summ <- summarise_study(stud_one)
   stud_many <- simulate_study_pd(
@@ -132,3 +132,41 @@ test_that("study simulation works", {
     sort(names(stud_one_summ))
   )
 })
+
+test_that("many studies are simulated", {
+  studs <- many_studies(
+    10, 1e5, c("children", "adults", "elderly"), pars_dict, init_seed = 1
+  )
+  expect_true(all(studs$seed[!is.na(studs$seed)] %in% 1:30))
+})
+
+test_that("parameters can be varied", {
+  vary_table_light <- list(pvac = c(0.05, 0.1), sens_vac = c(0.9, 0.95))
+  expect_equal(nrow(create_all_combos(vary_table_light)), 4)
+  sims <- vary_pars(
+    c("pvac", "sens_vac"), vary_table_light, 5, 1e5, "children", pars_dict,
+    init_seed = 1
+  )
+  expect_equal(
+    sims$pvac %>% sort() %>% unique(), c(0.05, 0.1)
+  )
+  expect_equal(
+    sims$sens_vac %>% sort() %>% unique(), c(0.9, 0.95)
+  )
+  expect_equal(
+    sims$seed %>% sort() %>% unique(), 1:20
+  )
+  vary_table_mult_light <- create_mult(
+    list(
+      ve = c(0.15, 0.33, 0.7),
+      pvac = c(0.05, 0.3, 0.5)
+    ),
+    c("children", "adults", "elderly"),
+    pars_dict
+  )
+  sims_mult <- vary_mult("pvac", 5, 1e5, vary_table_mult_light, 1)
+  expect_equal(sort(names(sims_mult)), sort(names(sims)))
+})
+
+
+
