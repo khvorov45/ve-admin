@@ -320,6 +320,10 @@ vary_table_mult <- list(
     spec_flu = c(0.9, 0.95, 1)
 )
 
+# Uncomment to regenerate results
+
+# Multiple groups
+
 # sims_mult <- map_dfr(
 #   names(vary_table_mult),
 #   vary_mult,
@@ -328,8 +332,10 @@ vary_table_mult <- list(
 # )
 # save_res(sims_mult, "mult", nsim, sim_dir)
 
-sims_one <- vary_pars_1aat(
-  names(vary_table), pars_dict$name,
-  nsim, 5e5, vary_table, pars_dict, 20191118
-)
-save_res(sims_one, "one", nsim, sim_dir)
+# Single group, single parameter
+
+# sims_one <- vary_pars_1aat(
+#   names(vary_table), pars_dict$name,
+#   nsim, 5e5, vary_table, pars_dict, 20191118
+# )
+# save_res(sims_one, "one", nsim, sim_dir)
