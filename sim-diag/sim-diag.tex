@@ -1,0 +1,73 @@
+\tikzstyle{group} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, text width=3cm, draw=black, fill=black, text=white, fill opacity=0.9, text opacity=1]
+
+\tikzstyle{arrowlab} = [rectangle, fill=black, text=white, fill opacity = 0.9]
+
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\pgfdeclarelayer{bg}
+\pgfsetlayers{bg, main}
+
+\begin{tikzpicture}[node distance=2cm]
+\node (pop) [group] {Population};
+\node (truevac) [group, below of=pop, left of=pop] {True vaccinated};
+\node (trueunvac) [group, below of=pop, right of=pop] {True unvaccinated};
+\node (recvac) [group, below of=truevac] {Recorded as vaccinated};
+\node (recunvac) [group, below of=trueunvac] {Recorded as unvaccinated};
+\node (nonflu) [group, below of=recunvac, left of=recunvac] {Non-flu};
+\node (nonari) [group, below left=1cm and 1cm of nonflu] {Non-ARI};
+\node (flu) [group, right=1cm of nonflu] {Flu};
+\node (ari) [group, below of=flu, left of=flu] {ARI};
+\node (sympt) [group, below of=ari] {Symptomatic};
+\node (asympt) [group, left=1cm of sympt] {Asymptomatic};
+\node (clin) [group, below of=sympt] {Clinically assessed};
+\node (nonclin) [group, left=1cm of clin] {Unassessed};
+\node (test) [group, below of=clin] {Tested};
+\node (nontest) [group, left=1cm of test] {Not tested};
+\node (fluinf) [group, below of=test] {Flu-infected};
+\node (notfluinf) [group, left=1cm of fluinf] {Non flu-infected and uninfected};
+\node (pos) [group, below of=fluinf] {Positive};
+\node (neg) [group, left=1cm of pos] {Negative};
+
+\draw[arrow] (pop) -- node[arrowlab] {$v$} (truevac);
+\draw[arrow, dashed] (pop) -- (trueunvac);
+
+\draw[arrow] (truevac) -- node[arrowlab] {$s_{e,v}$} (recvac);
+\draw[arrow, dashed] (truevac) -- (recunvac);
+\draw[arrow] (trueunvac) -- node[arrowlab] {$s_{p,v}$} (recunvac);
+\draw[arrow, dashed] (trueunvac) -- (recvac);
+
+\begin{pgfonlayer}{bg}
+\draw[arrow] (truevac) -- node[arrowlab, yshift=-1cm, xshift=1.5cm] {$f(1-e)$} (flu);
+\draw[arrow] (truevac) -- node[arrowlab, yshift=-1cm, xshift=0.5cm] {$l$} (nonflu);
+\draw[arrow] (trueunvac) -- node[arrowlab, yshift=-1cm, xshift=0.75cm] {$f$} (flu);
+\draw[arrow] (trueunvac) -- node[arrowlab, yshift=-1cm, xshift=-0.5cm] {$l$} (nonflu);
+\draw[arrow, dashed] (trueunvac) -- (nonari);
+\draw[arrow, dashed] (truevac) -- (nonari);
+
+\draw[arrow, dotted] (nonari) -- (nonclin);
+\end{pgfonlayer}
+
+\draw[arrow, dotted] (nonflu) -- (ari);
+\draw[arrow, dotted] (flu) -- (ari);
+
+\draw[arrow] (ari) -- node[arrowlab] {$p$} (sympt);
+\draw[arrow, dashed] (ari) -- (asympt);
+
+\draw[arrow] (sympt) -- node[arrowlab] {$c$} (clin);
+\draw[arrow, dashed] (sympt) -- (nonclin);
+
+\draw[arrow, dotted] (asympt) -- (nonclin);
+
+\draw[arrow] (clin) -- node[arrowlab] {$t_a$} (test);
+\draw[arrow, dashed] (clin) -- (nontest);
+\draw[arrow] (nonclin) -- node[arrowlab, yshift=-0.2cm, xshift=0.5cm] {$t_n$} (test);
+\draw[arrow, dashed] (nonclin) -- (nontest);
+
+\draw[arrow] (test) -- (fluinf);
+\draw[arrow, dashed] (test) -- (notfluinf);
+
+\draw[arrow] (fluinf) -- node[arrowlab] {$s_e$} (pos);
+\draw[arrow, dashed] (fluinf) -- (neg);
+\draw[arrow] (notfluinf) -- node[arrowlab] {$s_p$} (neg);
+
+\end{tikzpicture}
