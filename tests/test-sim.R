@@ -141,7 +141,7 @@ test_that("many studies are simulated", {
 })
 
 test_that("parameters can be varied", {
-  vary_table_light <- list(pvac = c(0.05, 0.1), sens_vac = c(0.9, 0.95))
+  vary_table_light <- list(pvac = c(0.05, 0.1, 0.2), sens_vac = c(0.9, 0.95))
   expect_equal(nrow(create_all_combos(vary_table_light)), 4)
   sims <- vary_pars(
     c("pvac", "sens_vac"), vary_table_light, 5, 1e5, "children", pars_dict,
@@ -156,17 +156,24 @@ test_that("parameters can be varied", {
   expect_equal(
     sims$seed %>% sort() %>% unique(), 1:20
   )
-  vary_table_mult_light <- create_mult(
-    list(
-      ve = c(0.15, 0.33, 0.7),
-      pvac = c(0.05, 0.3, 0.5)
-    ),
-    c("children", "adults", "elderly"),
-    pars_dict
+  vary_table_mult_light <- list(
+    ve = c(0.15, 0.33, 0.7),
+    pvac = c(0.05, 0.3, 0.5)
   )
-  sims_mult <- vary_mult("pvac", 5, 1e5, vary_table_mult_light, 1)
+  sims_mult <- vary_mult(
+    "pvac", vary_table_mult_light, 5, 1e5, c("children", "adults", "elderly"),
+    pars_dict, 1
+  )
   expect_equal(sort(names(sims_mult)), sort(names(sims)))
 })
 
-
+test_that("one parameter at a time in one group works", {
+  vary_table_light <- list(pvac = c(0.05, 0.1, 0.2), sens_vac = c(0.9, 0.95))
+  sims <- vary_pars_1aat(
+    c("pvac", "sens_vac"), c("children", "adults"),
+    5, 1e5, vary_table_light, pars_dict,
+    init_seed = 10
+  )
+  expect_equal(length(unique(sims$seed)), 2 * (3 * 5 + 2 * 5))
+})
 

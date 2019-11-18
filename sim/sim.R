@@ -144,7 +144,7 @@ simulate_study_pd <- function(nsam, nms, pars_dict,
 summarise_study <- function(study) {
   study %>%
     group_by(name, type) %>%
-    summarise(ve_est = calc_ve(n, case, vac_record),) %>%
+    summarise(ve_est = calc_ve(n, case, vac_record), n_study = sum(n)) %>%
     ungroup() %>%
     left_join(attr(study, "true_vals"), by = "name")
 }
@@ -233,10 +233,9 @@ create_mult <- function(vary_list, nms, pars_dict) {
 }
 
 # Vary parameters in a multi-group context
-vary_mult <- function(var_names, nsim, nsam, pars_dicts,
+vary_mult <- function(var_names, vary_table, nsim, nsam, set_names, pars_dict,
                       init_seed = sample.int(.Machine$integer.max, 1)) {
-  if (is.null(pars_dicts$vary_type)) abort("no vary_type in pars_dicts")
-  if (is.null(pars_dicts$vary_par)) abort("no vary_par in pars_dicts")
+  pars_dicts <- create_mult(vary_table, set_names, pars_dict)
   pars_dicts <- filter(pars_dicts, vary_par %in% var_names)
   nms <- unique(pars_dicts$name)
   pars_split <- group_split(pars_dicts, vary_type, vary_par)
@@ -250,6 +249,38 @@ vary_mult <- function(var_names, nsim, nsam, pars_dicts,
         nsim, nsam, nms, pars, init_seed + (ind - 1) * nsim * length(nms)
       ) %>% mutate(vary_name = paste0(vary_par, "--", vary_type))
     }
+  )
+}
+
+# Vary one parameter at a time in a population with one group in it
+vary_pars_1aat <- function(par_names, set_names, nsim, nsam,
+                           vary_table, pars_dict,
+                           init_seed = sample.int(.Machine$integer.max, 1)) {
+  sims_per_par <- map_dbl(vary_table[par_names], function(.x) length(.x) * nsim)
+  sims_per_set <- sum(sims_per_par)
+  imap_dfr(
+    set_names,
+    function(set_name, set_ind) {
+      imap_dfr(
+        par_names,
+        function(par_name, par_ind) {
+          if (par_ind == 1) sims_per_prev_par <- 0
+          else sims_per_prev_par <- sims_per_par[[par_ind - 1]]
+          vary_pars(
+            par_name, vary_table, nsim, nsam, set_name, pars_dict,
+            init_seed = init_seed + sims_per_prev_par * (par_ind - 1) +
+              sims_per_set * (set_ind - 1)
+          )
+        }
+      )
+    }
+  )
+}
+
+# Save results
+save_res <- function(res, name, nsim, folder) {
+  write_csv(
+    res, file.path(folder, paste0(name, "-", nsim, "sims.csv"))
   )
 }
 
@@ -273,8 +304,7 @@ vary_table <- list(
   spec_flu = seq(0.9, 1, 0.01)
 )
 
-vary_table_mult <- create_mult(
-  list(
+vary_table_mult <- list(
     prop = c(0.33, 0.7, 0.15),
     pvac = c(0.05, 0.3, 0.5),
     pflu = c(0.05, 0.1, 0.15),
@@ -288,18 +318,18 @@ vary_table_mult <- create_mult(
     spec_vac = c(0.5, 0.75, 1),
     sens_flu = c(0.5, 0.75, 1),
     spec_flu = c(0.9, 0.95, 1)
-  ),
-  c("children", "adults", "elderly"),
-  pars_dict
 )
 
-# Next - run in bulk (e.g. vary many parameters but not at the same time)
+# sims_mult <- map_dfr(
+#   names(vary_table_mult),
+#   vary_mult,
+#   vary_table_mult, nsim, 5e5, c("children", "adults", "elderly"),
+#   pars_dict, 20191118
+# )
+# save_res(sims_mult, "mult", nsim, sim_dir)
 
-sims_onegroup <- map_dfr(
-  pars_dict$name,
-  ~ vary_pars("pvac", vary_table, nsim, 1e5, .x, pars_dict, 20191115)
+sims_one <- vary_pars_1aat(
+  names(vary_table), pars_dict$name,
+  nsim, 5e5, vary_table, pars_dict, 20191118
 )
-
-write_csv(
-  sims_onegroup, file.path(sim_dir, paste0("onegroup-", nsim, "sims.csv"))
-)
+save_res(sims_one, "one", nsim, sim_dir)
