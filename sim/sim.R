@@ -285,7 +285,6 @@ vary_pars_maat <- function(par_names, set_names, nsim, nsam,
   sims_per_set <- nsim * nrow(
     create_all_combos(vary_table[names(vary_table) %in% par_names], pars_dict)
   )
-  print(sims_per_set)
   imap_dfr(
     set_names,
     function(set_name, set_ind) {
