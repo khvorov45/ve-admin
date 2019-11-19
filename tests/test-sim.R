@@ -177,3 +177,13 @@ test_that("one parameter at a time in one group works", {
   expect_equal(length(unique(sims$seed)), 2 * (3 * 5 + 2 * 5))
 })
 
+test_that("multiple parameters at a time in one group works", {
+  vary_table_light <- list(pvac = c(0.05, 0.1, 0.2), sens_vac = c(0.9, 0.95))
+  sims <- vary_pars_maat(
+    c("pvac", "sens_vac"), c("children", "adults"),
+    5, 1e5, vary_table_light, pars_dict,
+    init_seed = 10
+  )
+  expect_equal(length(unique(sims$seed)), 2 * (6 * 5))
+})
+

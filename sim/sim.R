@@ -278,6 +278,25 @@ vary_pars_1aat <- function(par_names, set_names, nsim, nsam,
   )
 }
 
+# Vary multiple parameters at a time in a population with one group in it
+vary_pars_maat <- function(par_names, set_names, nsim, nsam,
+                           vary_table, pars_dict,
+                           init_seed = sample.int(.Machine$integer.max, 1)) {
+  sims_per_set <- nsim * nrow(
+    create_all_combos(vary_table[names(vary_table) %in% par_names], pars_dict)
+  )
+  print(sims_per_set)
+  imap_dfr(
+    set_names,
+    function(set_name, set_ind) {
+      vary_pars(
+        par_names, vary_table, nsim, nsam, set_name, pars_dict,
+        init_seed = init_seed + sims_per_set * (set_ind - 1)
+      )
+    }
+  )
+}
+
 # Save results
 save_res <- function(res, name, nsim, folder) {
   write_csv(
@@ -321,6 +340,11 @@ vary_table_mult <- list(
     spec_flu = c(0.9, 0.95, 1)
 )
 
+vary_table_ve <- list(
+  ve = seq(0.1, 0.9, 0.1),
+  pvac = seq(0.1, 0.9, 0.1)
+)
+
 # Uncomment to regenerate results
 
 # Multiple groups
@@ -340,3 +364,16 @@ vary_table_mult <- list(
 #   nsim, 5e5, vary_table, pars_dict, 20191118
 # )
 # save_res(sims_one, "one", nsim, sim_dir)
+
+# VE investigation
+
+sims_ve <- vary_pars_maat(
+  names(vary_table_ve),
+  c(
+    "special_no", "special_se_f",
+    "special_sp_f", "special_se_v", "special_sp_v"
+  ),
+  nsim, 5e5, vary_table, pars_dict, 20191118
+)
+save_res(sims_ve, "veinv", nsim, sim_dir)
+
