@@ -8,4 +8,8 @@ Investigation of VE estimates with surveillance and administrative data
 
 * `sim` simulations.
 
+* `sim-summary` summary of simulations.
+
+* `sim-diag` diagrams of how the core simualtion works
+
 * `tests` tests of functions. Expect functions to be in the global environment. RStudio's "Run Tests" will not work because it will not look there.
