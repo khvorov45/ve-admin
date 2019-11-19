@@ -182,6 +182,7 @@ vary_pars <- function(var_names, vary_table, nsim, nsam, set_name, pars_dict,
   needed_vars <- vary_table[names(vary_table) %in% var_names] %>%
     create_all_combos()
   pars <- pars_dict %>%
+    mutate(prop = 1, clin = 1) %>% # Only have meaning in multi-group context
     filter(name == set_name) %>%
     select(-var_names) %>%
     group_split(name) %>%
