@@ -6,12 +6,64 @@
 library(tidyverse)
 library(rlang)
 library(furrr) # Like purrr but with parallel support
-library(extraDistr) # For the categorical and bernouilli disributions
+library(extraDistr) # For the categorical and bernoulli disributions
 
-plan(multiprocess) # Parallel setup
+plan(multiprocess, workers = 20) # Parallel setup
 
+# Directory names that will be used later
 sim_dir <- "sim"
 pars_dir <- "pars"
+
+# Settings ====================================================================
+
+nsim <- 5 # Number of simulations
+pars_dict <- read_csv(file.path(pars_dir, "pars.csv")) # Parameter values
+
+# These will be varied one at a time in a population that consists of one group
+# Results are saved to one-<nsim>sims.csv
+vary_table <- list(
+  pvac = seq(0.05, 0.5, 0.05),
+  pflu = seq(0.05, 0.15, 0.01),
+  ve = seq(0.1, 0.9, 0.1),
+  pnonflu = seq(0.1, 0.3, 0.02),
+  sympt = seq(0.1, 0.9, 0.1),
+  clin = seq(0.1, 0.9, 0.1),
+  test_clin = seq(0.1, 0.9, 0.1),
+  test_nonclin = seq(0, 0.3, 0.05),
+  sens_vac = seq(0.9, 1, 0.01),
+  spec_vac = seq(0.5, 1, 0.05),
+  sens_flu = seq(0.5, 1, 0.05),
+  spec_flu = seq(0.9, 1, 0.01)
+)
+
+# These will be used for simulations of populations with multiple groups.
+# Pattern is (low, mid, high). All groups are set to one of 6 patterns:
+# all low, all mid, all high, 1 low 2 high (3 groups, so 3 of these).
+# Results are saved to mult-<nsim>.csv
+vary_table_mult <- list(
+  prop = c(0.33, 0.7, 0.15),
+  pvac = c(0.05, 0.3, 0.5),
+  pflu = c(0.05, 0.1, 0.15),
+  ve = c(0.15, 0.33, 0.7),
+  pnonflu = c(0.1, 0.15, 0.3),
+  sympt = c(0.1, 0.5, 0.9),
+  clin = c(0.1, 0.5, 0.9),
+  test_clin = c(0.1, 0.5, 0.9),
+  test_nonclin = c(0, 0.15, 0.3),
+  sens_vac = c(0.9, 0.95, 1),
+  spec_vac = c(0.5, 0.75, 1),
+  sens_flu = c(0.5, 0.75, 1),
+  spec_flu = c(0.9, 0.95, 1)
+)
+
+# These will be varied simultaneously in a population with one group in it to
+# investigate the interaction between ve and pvac
+# in presence of misclassification by running it on different populations
+# (parameter sets) which have different miscalssification profiles.
+vary_table_ve <- list(
+  ve = seq(0.1, 0.9, 0.1),
+  pvac = seq(0.1, 0.9, 0.1)
+)
 
 # Functions ===================================================================
 
@@ -304,46 +356,6 @@ save_res <- function(res, name, nsim, folder) {
 }
 
 # Script ======================================================================
-
-nsim <- 5
-pars_dict <- read_csv(file.path(pars_dir, "pars.csv"))
-
-vary_table <- list(
-  pvac = seq(0.05, 0.5, 0.05),
-  pflu = seq(0.05, 0.15, 0.01),
-  ve = seq(0.1, 0.9, 0.1),
-  pnonflu = seq(0.1, 0.3, 0.02),
-  sympt = seq(0.1, 0.9, 0.1),
-  clin = seq(0.1, 0.9, 0.1),
-  test_clin = seq(0.1, 0.9, 0.1),
-  test_nonclin = seq(0, 0.3, 0.05),
-  sens_vac = seq(0.9, 1, 0.01),
-  spec_vac = seq(0.5, 1, 0.05),
-  sens_flu = seq(0.5, 1, 0.05),
-  spec_flu = seq(0.9, 1, 0.01)
-)
-
-vary_table_mult <- list(
-    prop = c(0.33, 0.7, 0.15),
-    pvac = c(0.05, 0.3, 0.5),
-    pflu = c(0.05, 0.1, 0.15),
-    ve = c(0.15, 0.33, 0.7),
-    pnonflu = c(0.1, 0.15, 0.3),
-    sympt = c(0.1, 0.5, 0.9),
-    clin = c(0.1, 0.5, 0.9),
-    test_clin = c(0.1, 0.5, 0.9),
-    test_nonclin = c(0, 0.15, 0.3),
-    sens_vac = c(0.9, 0.95, 1),
-    spec_vac = c(0.5, 0.75, 1),
-    sens_flu = c(0.5, 0.75, 1),
-    spec_flu = c(0.9, 0.95, 1)
-)
-
-vary_table_ve <- list(
-  ve = seq(0.1, 0.9, 0.1),
-  pvac = seq(0.1, 0.9, 0.1)
-)
-
 # Uncomment to regenerate results
 
 # Multiple groups
@@ -366,13 +378,12 @@ vary_table_ve <- list(
 
 # VE investigation
 
-sims_ve <- vary_pars_maat(
-  names(vary_table_ve),
-  c(
-    "special_no", "special_se_f",
-    "special_sp_f", "special_se_v", "special_sp_v"
-  ),
-  nsim, 5e5, vary_table, pars_dict, 20191118
-)
-save_res(sims_ve, "veinv", nsim, sim_dir)
-
+# sims_ve <- vary_pars_maat(
+#   names(vary_table_ve),
+#   c(
+#     "special_no", "special_se_f",
+#     "special_sp_f", "special_se_v", "special_sp_v"
+#   ),
+#   nsim, 5e5, vary_table, pars_dict, 20191118
+# )
+# save_res(sims_ve, "veinv", nsim, sim_dir)
