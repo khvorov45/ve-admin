@@ -43,3 +43,4 @@ names(all_res) <- str_replace(basename(all_res_nms), ".csv", "")
 all_summs <- map(all_res, summ_res)
 
 iwalk(all_summs, save_summ, sim_summ_dir)
+
