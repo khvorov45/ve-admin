@@ -1,0 +1,166 @@
+% Revised VE Simulation Report
+% Arseniy Khvorov
+% Created 2019/06/04
+% Last edit 2019/06/04
+
+\documentclass[11pt]{article}
+
+\usepackage[utf8x]{inputenc}
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry}
+\geometry{a4paper}
+\geometry{margin=1in} % for example, change the margins to 2 inches all round
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+\usepackage[parfill]{parskip} % Begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{float}
+
+\usepackage[numbers]{natbib}
+\bibliographystyle{vancouver}
+
+
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{amsmath}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+%%% FLOWCHART
+\usepackage{tikz} % flowcharts
+\usetikzlibrary{shapes.geometric, arrows, positioning, backgrounds}
+
+
+\renewcommand{\arraystretch}{1.1}
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{\leftmark}\chead{}\rhead{\rightmark}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+\usepackage[bookmarks,hidelinks]{hyperref}
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{VE estimates with administrative data}
+\author{Arseniy Khvorov}
+\date{October 2019} 
+
+\begin{document}
+\maketitle
+
+\renewcommand{\abstractname}{}
+\begin{abstract}
+	\begin{center}
+	Simulation repository\\
+	https://github.com/khvorov45/ve-admin
+	\end{center}
+\end{abstract}
+
+\tableofcontents
+
+\pagebreak
+
+%
+\section{Methods}
+
+%%
+\subsection{Core simulation}
+
+Starting population was the general population. Its size was set to 500,000. Every individual had their attributes randomly allocated in the order shown in Figure \ref{SimDiag} and with probabilities shown in tables below.
+
+First allocated attribute was true vaccination status. Measurement of this status for the purposes of the simulated study was allowed to be inaccurate in order to simulate exposure miscalssification. True vaccination status was used to determine which probability to use to allocate individuals to the flu-infected category. Both vaccinated and unvaccinated subjects were allocated to the non-flu infected category with the same probability. The remaining subjects ended up as part of the non-ARI category.
+
+Everyone with an ARI (either infected with flu or a non-flu pathogen) was assigned to either the symptomatic or the asymptomatic group. Those who were symptomatic were assigned to the clinically assessed or unassessed groups. Being clinically assessed in this context means that they presented to a clinic with ARI illness and they were classified as an ARI case. These clinically assessed ARI cases got one probability of being tested, everyone else got another. Tests were allowed to be imperfect to simulate outcome misclassification.
+
+%%
+\subsection{Population summary}
+
+Each population was collapsed down to summary results - each individual was considered to be part of one of eight categories: administrative/surveillance vaccinated/unvaccinated case/control as shown in Figure \ref{PopAgg}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.5\linewidth]{../sim-diag/popagg-venn.png}
+		\caption{
+Assignment of an individual to appropriate categories. A - administrative, S - surveillance, V - vaccinated, U - unvaccinated, C - case, N - non-case (control). \label{PopAgg}
+		}
+\end{figure}
+
+Individuals in each of the categories were counted. These counts were representative of those that could have been obtained if a test-negative study was done on that population either using administrative or surveillance data. VE estimates could then be calculated as 1 - OR where OR = $\frac{\text{Odds in vaccinated}}{\text{Odds in unvaccinated}}$ where Odds = $\frac{\text{Count of cases}}{\text{Count of controls}}$.
+
+\pagebreak
+
+\begin{figure}[H]
+	\centering
+		\input{../sim-diag/sim-diag.tex}
+		\caption{
+Simulation decision tree. Parameter key is in Table \ref{TabParKey}. Solid lines mean allocation with probabilities represented by the indicated parameters. Dashed line probabilities are complements of corresponding solid line probabilities. Dotted lines represent full-group allocation. Probability of being flu-infected for those who are tested isn't indicated because it wasn't necessary for the purposes of simulations. \label{SimDiag}
+		}
+\end{figure}
+
+\pagebreak
+%%
+\subsection{Parameter Variation}
+
+Every parameter in the simulation was set at a prespecified value. Some of the parameters were set to vary (their prespecified value would have been ignored then). Setting a parameter to vary meant meant that the parameter was assigned a small set of values, set to the first of those values, a set amount of populations were simulated using that value, then it was set to the next value and so on until the simulation went through the entire set.
+
+If multiple parameters were set to vary the simulation would have gone through all possible combinations of all parameters values.
+
+%%
+\subsection{Mixed-group simulations}
+
+If a simulation required a population to be composed of multiple groups, each group was simulated as if it were a separate population. The only mixed combination used was children/adults/elderly. The total size of each group was obtained by multiplying the total requested sample size (usually 200,000) by the specified proportion of each group in the population (this is the $w$ parameter which would have been set to 1 if there was only one group in the population). Amounts of cases and controls were counted in each of the groups and added together to represent the counts obtained from the full population.
+
+%%
+\subsection{Additional simulations}
+
+To determine the effects of individual parameters, an additional set of simulations was performed with parameters fixed to values shown in Table \ref{AddSim}. This set of parameter values produced unbiased VE estimates in surveillance data. Using this as a baseline, required parameters could be varied (e.g. $s_p$ can be set below 1) to observe their effect in absence of other sources of bias. Additional simulations were also used to observe the effect some parameters have on others (e.g. how $s_p$ set below 1 affects variation of VE estimates at different values of $t_n$).
+
+\pagebreak
+%%
+\subsection{Parameter estimates used}
+
+\begin{table}[h]
+\centering
+\caption{
+Parameter names, meanings and values used in simulations. "Range used" shows the range of values used for variation in individual age group simulations. Tables \ref{TabComb} contains values and patterns used for variation in mixed group simulations. Every parameter except $c$ represents an absolute probability (some of them only apply to subsets of the population). Only relative probability estimates could be obtained for $c$ (by comparing presentation counts found in ASPREN data \cite{ASPREN} to expected underlying population size derived from other parameter estimates), its values were  set to 1 in individual group simulations unless it is the parameter varied. Parameter $w$ was only relevant if the population was requested to be composed of multiple groups. Shown values are the ones used in children/adults/elderly mixed simulation. In individual simulations, $w$ was set to 1. Estimates of $v$ and $e$ were derived from provided data. \label{TabParKey}
+}
+	\input{../pars/ind.tex}
+\end{table}
+
+\pagebreak
+
+
+
+\cite{ASPREN}
+
+\pagebreak
+\thispagestyle{plain}
+\bibliography{references}
+
+\end{document}
