@@ -1,14 +1,14 @@
-# Figures of simulation summaries
+# Figures of summaries of individual age group group simulations
 # Arseniy Khvorov
 # Created 2019/11/20
-# Last edit 2019/11/20
+# Last edit 2019/11/21
 
 library(tools)
 library(tidyverse)
 library(ggdark) # devtools::install_github("khvorov45/ggdark")
 
 # Directory names that will be used later
-fig_dir <- "fig"
+fig_dir <- "fig-agesind"
 sim_summ_dir <- "sim-summary"
 
 # Settings ====================================================================
@@ -64,7 +64,7 @@ onevar_plot <- function(onevar_onepar, par_lbls, theme) {
 
 save_plot <- function(pl, folder) {
   ggsave_dark(
-    file.path(folder, paste0("ages-", attr(pl, "plotname"), ".pdf")),
+    file.path(folder, paste0("agesind-", attr(pl, "plotname"), ".pdf")),
     pl, dark = FALSE,
     width = 15, height = 6.5, units = "cm", device = "pdf"
   )
