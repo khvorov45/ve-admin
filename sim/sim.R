@@ -279,7 +279,7 @@ create_mult <- function(vary_list, nms, pars_dict) {
         )
       lows <- bind_rows(lows, one_low)
     }
-    entry <- bind_rows(all_eq, lows)
+    entry <- bind_rows(eqs, lows)
     mult <- bind_rows(mult, entry)
   }
   mult

@@ -165,6 +165,7 @@ test_that("parameters can be varied", {
     pars_dict, 1
   )
   expect_equal(sort(names(sims_mult)), sort(names(sims)))
+  expect_equal(length(unique(sims_mult$seed)), 6 * 5 * 3 + 1) # 1 for missing
 })
 
 test_that("one parameter at a time in one group works", {
