@@ -8,7 +8,7 @@ library(tidyverse)
 library(ggdark) # devtools::install_github("khvorov45/ggdark")
 
 # Directory names that will be used later
-fig_dir <- "fig-agesind"
+fig_agesind_dir <- "fig-agesind"
 sim_summ_dir <- "sim-summary"
 
 # Settings ====================================================================
@@ -89,5 +89,5 @@ ages_plots <- ages %>%
   group_split(vary_name) %>%
   map(onevar_plot, par_lbls, onevar_plot_theme)
 
-walk(ages_plots, save_plot, fig_dir)
+walk(ages_plots, save_plot, fig_agesind_dir)
 
