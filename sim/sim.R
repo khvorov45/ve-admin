@@ -1,7 +1,7 @@
 # Simulations of VE studies
 # Arseniy Khvorov
 # Created 2019/11/13
-# Last edit 2019/11/13
+# Last edit 2019/11/20
 
 library(tidyverse)
 library(rlang)
@@ -16,7 +16,7 @@ pars_dir <- "pars"
 
 # Settings ====================================================================
 
-nsim <- 5 # Number of simulations
+nsim <- 500 # Number of simulations
 pars_dict <- read_csv(file.path(pars_dir, "pars.csv")) # Parameter values
 
 # These will be varied one at a time in a population that consists of one group
