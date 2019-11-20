@@ -66,7 +66,7 @@ save_plot <- function(pl, folder) {
   ggsave_dark(
     file.path(folder, paste0("agesind-", attr(pl, "plotname"), ".pdf")),
     pl, dark = FALSE,
-    width = 15, height = 6.5, units = "cm", device = "pdf"
+    width = 12, height = 5, units = "cm", device = "pdf"
   )
 }
 
