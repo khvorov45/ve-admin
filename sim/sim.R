@@ -384,6 +384,6 @@ save_res <- function(res, name, nsim, folder) {
 #     "special_no", "special_se_f",
 #     "special_sp_f", "special_se_v", "special_sp_v"
 #   ),
-#   nsim, 5e5, vary_table, pars_dict, 20191118
+#   nsim, 5e5, vary_table_ve, pars_dict, 20191118
 # )
 # save_res(sims_ve, "veinv", nsim, sim_dir)
