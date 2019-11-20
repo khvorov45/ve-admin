@@ -43,6 +43,10 @@ onevar_plot_theme <- theme_bw() +
 
 # Plots variation of one parameter across multiple groups
 onevar_plot <- function(onevar_onepar, par_lbls, theme) {
+  true_line <- function(vary_name) {
+    if (vary_name == "ve") geom_abline(slope = 1, intercept = 0, lty = "1111")
+    else geom_hline(aes(yintercept = ve), lty = "1111")
+  }
   vary_name <- unique(onevar_onepar$vary_name)
   xlbls <- unique(onevar_onepar[[vary_name]])
   pl <- onevar_onepar %>%
@@ -55,7 +59,7 @@ onevar_plot <- function(onevar_onepar, par_lbls, theme) {
     xlab(par_lbls[[vary_name]]) +
     ylab("Estimated VE") +
     facet_wrap(~name, nrow = 1) +
-    geom_hline(aes(yintercept = ve), lty = "1111") +
+    true_line(vary_name) +
     geom_point(aes(shape = type)) +
     geom_line(aes(lty = type))
   attr(pl, "plotname") <- vary_name
