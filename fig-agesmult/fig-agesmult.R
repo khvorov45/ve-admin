@@ -36,7 +36,8 @@ agesmult_theme <- theme_bw() +
     axis.text.x = element_text(angle = 90),
     legend.position = "bottom",
     legend.box.spacing = unit(0, "null"),
-    legend.margin = margin(0, 0, 0, 0)
+    legend.margin = margin(0, 0, 0, 0),
+    panel.grid.minor.y = element_blank()
   )
 
 # Functions ===================================================================
