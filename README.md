@@ -1,6 +1,10 @@
 # ve-admin
 
-Investigation of VE estimates with surveillance and administrative data
+Investigation of VE estimates with surveillance and administrative data.
+
+## Usage
+
+All `.R` files are (should be) independent but expect the working directory to be that of the `.Rroj` file.
 
 ## Directories
 
