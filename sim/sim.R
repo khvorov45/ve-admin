@@ -274,8 +274,8 @@ create_mult <- function(vary_list, nms, pars_dict) {
     for (i in 1:3) {
       one_low <- entry %>%
         mutate(
-          !!sym(var_name) := if_else(name == nms[[i]], vals[[1]], vals[[3]]),
-          vary_type = paste0(nms[[i]], "-low")
+          !!sym(var_name) := if_else(name == nms[[i]], vals[[3]], vals[[1]]),
+          vary_type = paste0(nms[[i]], "-high")
         )
       lows <- bind_rows(lows, one_low)
     }
