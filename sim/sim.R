@@ -8,7 +8,7 @@ library(rlang)
 library(furrr) # Like purrr but with parallel support
 library(extraDistr) # For the categorical and bernoulli disributions
 
-plan(multiprocess, workers = 20) # Parallel setup
+plan(multiprocess) # Parallel setup
 
 # Directory names that will be used later
 sim_dir <- "sim"
