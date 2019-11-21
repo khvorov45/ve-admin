@@ -1,8 +1,8 @@
-\begin{tabular}{cp{5em}p{7em}p{5em}p{8em}c}
+\begin{tabular}{cp{7em}p{7em}p{6.5em}p{6.5em}c}
 \toprule
 Data type & Cases vaccinated & Cases unvaccinated & Controls vaccinated & Controls unvaccinated & OR \\
 \midrule
-Admiistrative & $(1-e)f \sum_{i=1}^3 v_i$ & $f \sum_{i=1}^3 (1-v_i)$ & $[v_1h_v+l \sum_{i=1}^3 v_i]$ & $[h_u(1-v_1) + l\sum_{i=1}^3(1-v_i)]$ & Eq. \ref{ORBad} \\
+Administrative & $(1-e) f \sum_{i=1}^3 v_i$ & $f \sum_{i=1}^3 (1-v_i)$ & $v_1h_v+l \sum_{i=1}^3 v_i$ & $h_u(1-v_1) + l\sum_{i=1}^3(1-v_i)$ & Eq. \ref{ORBad} \\[30pt]
 Surveillace & $(1-e)f \sum_{i=1}^3 v_i$ & $f \sum_{i=1}^3 (1-v_i)$ & $l \sum_{i=1}^3 v_i$ & $l\sum_{i=1}^3(1-v_i)$ & $1-e$ \\
 \bottomrule
 \end{tabular}
