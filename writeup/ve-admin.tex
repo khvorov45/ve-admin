@@ -367,6 +367,61 @@ Effect of changing $s_e$ in different populations. All were simulated inidvidual
 		}
 \end{figure}
 
+\pagebreak
+%
+\subsection{Mixed-group simulations}
+
+Bias is generally negative (towards the null). Administrative data is generally more biased in the same direction as surveillance.
+
+\subsubsection{Effect of $t_n$}
+
+Under certain conditions, the overall administrative VE estimate can become much more biased than the overall surveillance estimate or any of the group-specific estimates. This happened in the simulations when$t_n$ was set to a high value (0.3) either in the elderly or in children and to a low value (0) in the other groups as shown in Figure \ref{agesmult-tn}
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\linewidth]{../fig-agesmult/agesmult-test_nonclin.pdf}
+		\caption{
+Effect of changing $t_n$ in a population with multiple groups. Dashed line is the true value. Dotted line is drawn at VE estimate of 0. The three panels on the left show group-specific VE estimates. The right-most panel shows the VE estimates calculated from the whole sample ignoring age. Letters correspond to parameter combinations shown in Table \ref{TabComb}: all low (l), all mid (m), all high (h), children low (cl), adults low (al), elderly low (el). The overall administrative estimate under is more biased when $t_n$ is set to a high value in the elderly or in the children than under other combinations. \label{agesmult-tn}
+		}
+\end{figure}
+
+The results above show that when $t_n$ changes among groups, the overall unadjusted estimate of VE of administrative data can swing in either direction.
+
+The reason for this is that those who do not have an ARI but are included into the study will mostly contribute to the study's non-cases. If the majority of the ARI-free people are vaccinated, then their contribution to vaccinated controls will be greater than to vaccinated cases. This only becomes a problem for the odds ratio (and vaccine effectiveness) estimates when the groups are mixed and the estimates are coming from the overall population.
+
+To illustrate, let's say there is a population with 3 age subgroups and non-ARI individuals are only tested in one of them. Table \ref{TabExCntIndividual} shows expected counts and odds ratio (OR).
+
+\begin{table}[h]
+\centering
+\caption{
+Expected proportions of administrative data in a population with three age groups. $h_v = 1 - (1-e)f - l$ represents the probability of staying healthy for a vaccinated individual. $h_u = 1 - f - l$ represents the probability of staying healthy for an unvaccinated individual.
+Assumptions: no misclassification, $t_a=1$, $t_n=1$ in group 1 and 0 otherwise, disease incidence is the same in all groups, all groups have the same size. 
+ \label{TabExCntIndividual}
+}
+	\input{../tab-math/tn-counts.tex}
+\end{table}
+
+If the OR were to be calculated for individual age subgroups, it would be unbiased if they only contain people with ARI (groups 2 and 3). Some bias is introduced with "contamination" by healthy people. This corresponds to a traditional case-control study - control subjects are selected from everyone who isn't a case (as opposed to everyone with an ARI who isn't a case). With low flu incidence $h_u \simeq h_v$ so the bias is small. 
+
+The overall population is where bias has the potential to swing in a more pronounced manner. Table \ref{TabExCntOverall} shows expected counts in the overall population (made up of subgroups 1, 2 and 3) for both surveillance and administrative data.
+
+\begin{table}[h]
+\centering
+\caption{
+Expected proportions in the overall population. The first row is a population made up of the three age groups in Table \ref{TabExCntIndividual}. The second row is the counts we would have gotten if the first subgroup in Table \ref{TabExCntIndividual} did not have healthy people in control groups (i.e. if all groups had $t_n$ set to 0). This corresponds to surveillance data counts. \label{TabExCntOverall}
+}
+	\input{../tab-math/tn-counts-overall.tex}
+\end{table}
+
+Surveillance data would only include those with ARI which is why it is not affected by the "contamination" by healthy people which is experienced by administrative data hence its odds ratio is unbiased. However the OR coming from administrative data would have this form:
+
+\begin{equation} \label{ORBad}
+OR_{1 2 3} = \frac
+{(1-e) \sum_{i=1}^3 v_i \Big[ h_u(1-v_1) + l\sum_{i=1}^3(1-v_i) \Big]}
+{\sum_{i=1}^3 (1-v_i) \Big[ v_1h_v+l \sum_{i=1}^3 v_i \Big]}
+\end{equation}
+
+The issue comes from the fact that group 1 can contribute different counts to numerator and denominator and therefore make the OR swing in either direction. Figure \ref{ORbadVGraph} demonstrates how the vaccinated proportion in subgroup 1 can affect the overall OR.
 
 \pagebreak
 \thispagestyle{plain}
