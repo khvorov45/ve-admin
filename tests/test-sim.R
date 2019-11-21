@@ -160,6 +160,9 @@ test_that("parameters can be varied", {
     ve = c(0.15, 0.33, 0.7),
     pvac = c(0.05, 0.3, 0.5)
   )
+  mult_table <- create_mult(
+    vary_table_mult_light, c("children", "adults", "elderly"), pars_dict
+  )
   sims_mult <- vary_mult(
     "pvac", vary_table_mult_light, 5, 1e5, c("children", "adults", "elderly"),
     pars_dict, 1
