@@ -358,7 +358,7 @@ save_res <- function(res, name, nsim, folder) {
 # Script ======================================================================
 # Uncomment to regenerate results
 
-# Multiple groups
+# Multiple groups - mult-<nsim>sims.csv
 
 # sims_mult <- map_dfr(
 #   names(vary_table_mult),
@@ -368,7 +368,7 @@ save_res <- function(res, name, nsim, folder) {
 # )
 # save_res(sims_mult, "mult", nsim, sim_dir)
 
-# Single group, single parameter
+# Single group, single parameter - one-<nsim>sims.csv
 
 # sims_one <- vary_pars_1aat(
 #   names(vary_table), pars_dict$name,
@@ -376,7 +376,7 @@ save_res <- function(res, name, nsim, folder) {
 # )
 # save_res(sims_one, "one", nsim, sim_dir)
 
-# VE investigation
+# VE investigation - veinv-<nsim>sims.csv
 
 # sims_ve <- vary_pars_maat(
 #   names(vary_table_ve),
