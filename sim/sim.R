@@ -41,7 +41,7 @@ vary_table <- list(
 # all low, all mid, all high, 1 low 2 high (3 groups, so 3 of these).
 # Results are saved to mult-<nsim>.csv
 vary_table_mult <- list(
-  prop = c(0.33, 0.7, 0.15),
+  prop = c(0.15, 0.33, 0.7),
   pvac = c(0.05, 0.3, 0.5),
   pflu = c(0.05, 0.1, 0.15),
   ve = c(0.1, 0.5, 0.9),
