@@ -186,7 +186,187 @@ The following sections present and discuss results associated with every paramet
 %%
 \subsubsection{Effect of tested proportions --- $t_a$ and $t_n$}
 
-Changing $t_a$ and $t_n$ only affected the estimates of VE in administrative data as shown in Figures \ref{PtaExplained} and \ref{PtnExplained} respectively. The parameter that allowed the pattern seen in Figure \ref{PtaExplained} to be replicated in the additional simulation set was influenza test specificity $s_p$ when set below 1. No additional simulation replicated the pattern seen in Figure \ref{PtnExplained} (most obvious in the elderly group).
+Changing $t_a$ (test probability for those with clinically assessed ARI) and $t_n$ (test probability for everyone else) only affected the estimates of VE in administrative data as shown in Figures \ref{agesind-ta} and \ref{agesind-tn} respectively. The parameter that allowed the pattern seen in Figure \ref{agesind-ta} to be replicated in the additional simulation set was influenza test specificity $s_p$ when set below 1. No additional simulation replicated the pattern seen in Figure \ref{agesind-tn} (most obvious in the elderly group).
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=.75\linewidth]{../fig-agesind/agesind-test_clin.pdf}
+		\caption{
+Effect of changing $t_a$ in different populations. All groups were simulated individually. The dotted line is the true value. \label{agesind-ta}
+		}
+		\includegraphics[width=.75\linewidth]{../fig-agesind/agesind-test_nonclin.pdf}
+		\caption{
+Effect of changing $t_n$ in different populations. All were simulated inidvidually. The dotted line is the true value. \label{agesind-tn}
+		}
+\end{figure}
+
+\pagebreak
+
+The reason why only administrative data is affected is the fact that when $t_a$ changed, $t_n$ remained fixed and vice versa. As $t_a$ decreased, administrative sample became more and more different from surveillance due to there being a decreasing proportion of people with ARI in the population who get tested and a constant proportion without ARI who get tested. This compositional difference can also be created by fixing $t_a$ and increasing $t_n$. The results produced are equivalent - as the administrative sample becomes more compositionally different from the surveillance sample, the administrative estimate bias may increase. 
+
+The reason why no additional simulation replicated the pattern in Figure \ref{agesind-tn} is likely the fact that additional simulations only allowed one parameter other than $t_n$ to introduce bias. The pattern seen is likely a result of multiple parameters other than $t_n$ introducing bias. Hence no additional simulation set had enough ``accumulated'' bias to replicate the pattern closely.
+
+%%
+\subsubsection{Effect of true vaccine effectiveness ($e$)}
+
+Variation of the parameter affected both surveillance and administrative estimates of VE --- they were more biased with higher true VE values, especially so in children as shown in Figure \ref{agesind-ve}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.75\linewidth]{../fig-agesind/agesind-ve.pdf}
+		\caption{
+Effect of changing $e$ in different populations. All were simulated inidvidually. The dotted line is the true value. \label{agesind-ve}
+		}
+\end{figure}
+
+The parameter responsible for the greater bias in children was most likely the vaccinated proportion $v$ as children had it set to the lowest value of the three groups. Since the additional simulations that had low $v$ did not have the pattern replicated, it is likely that low $v$ increases bias at high $e$ only in presence of misclassification. This was confirmed when more simulations were run where $e$ and $v$ were both varied in different misclassification settings. Results in Figure \ref{veinv-summ} showed that the pattern is only replicated with low $v$ and non-one $s_{p,v}$.
+
+\pagebreak
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.85\linewidth]{../fig-veinv/veinv-limited.pdf}
+		\caption{
+Effect of changing both $e$ and $v$ while also allowing for misclassification. The other parameters were set to values shown in Table \ref{AddSim} . Only miscalssification setting shown is decreased $s_{p,v}$. Other settings (decreased $s_{e,v}$,  $s_p$, $s_e$) produced results similar to those of no miscalssificaiton. \label{veinv-summ}
+		}	
+\end{figure}
+
+The fact that in absence of miscalssification neither vaccine effectiveness nor vaccinated proportion will be expected to have an effect on the bias of a test-negative odds ratio can be shown in Table \ref{tab:veinv1} and Eq.\ \ref{eq:veinv1}.
+
+\begin{table}[h]
+\centering
+\caption{
+Expected proportions of surveillance data.
+Assumptions: no misclassification, $t_a$= 1, $t_n$= 1.
+$F$ - flu-infected, $V$ - vaccinated.
+ \label{tab:veinv1}
+}
+	\input{../tab-math/veinv1.tex}
+\end{table}
+
+\begin{equation} \label{eq:veinv1}
+OR = 1-e
+\end{equation}
+
+When misclassification is added in a form of imperfect specificity of vaccination status measurement, bias is introduced as seen in Table \ref{tab:veinv2} and Eq.\ \ref{eq:veinv2}
+
+\begin{table}[h]
+\centering
+\caption{
+Expected proportions of surveillance data. Assumptions: no misclassification other than $s_{p,v}$, $t_a$= 1,$t_n$= 1.
+$F$ - flu-infected, $V$ - vaccinated
+ \label{tab:veinv2}
+}
+	\input{../tab-math/veinv2.tex}
+\end{table}
+
+\begin{equation} \label{eq:veinv2}
+\begin{aligned}
+OR &= \frac{v(1-e)+(1-s_{p,v})(1-v)}{v+(1-s_{p,v})(1-v)} =  \frac{v-ev+1-s_{p,v}-v+s_{p,v}v}{v+1-v-s_{p,v}+s_{p,v}v} =  
+	\frac{s_{p,v}v-s_{p,v}-ev+1}{s_{p,v}v-s_{p,v}+1} \\
+	&= \frac{s_{p,v}(v-1)+1-ev}{s_{p,v}(v-1)+1} = 1 - \frac{ev}{s_{p,v}(v-1)+1}
+\end{aligned}
+\end{equation}
+
+This OR will approach the unbiased $1-e$ as $v$ increases. Eq.\ \ref{eq:veinv3} shows that the bias will increase with $e$ but only if $s_{p,v}<1$. When $s_{p,v}=1$ the bias is 0.
+
+\begin{equation} \label{eq:veinv3}
+\begin{aligned}
+B &= OR_{\text{biased}} - RR_{\text{true}} = 1 - \frac{ev}{s_{p,v}(v-1)+1} - (1-e) = e - \frac{ev}{s_{p,v}(v-1)+1} \\
+	&= e(1 - \frac{v}{s_{p,v}(v-1)+1})
+\end{aligned}
+\end{equation}
+
+For a given value of $e$, the bias is proportional to $1 - \frac{v}{s_{p,v}(v-1)+1}$ meaning that it depends on $v$ but only if $s_{p,v}<1$. When $s_{p,v}=1$ the bias is 0.
+
+The overall effect of true VE is such that as long as there is imperfect vaccination status measurement specificity, higher values of it will result in greater bias and this bias will be affected by vaccinated proportion - the smaller the proportion the greater the bias. 
+
+Other misclassification types can allow true VE to introduce bias as well but simulation results showed that it would not be as prominent as the one discussed above (associated with $s_{p,v}$), and it would not depend on vaccinated proportion which is why it would not explain the differences between age groups in Figure \ref{agesind-ve}. Effect of other types of misclassification will be discussed in their own sections.
+
+Since miscalssification can always be expected, highly efficacious vaccines are likely to be underestimated to a greater degree than less efficacious vaccines, especially so when only a small proportion of the population is vaccinated.
+
+%%
+\subsubsection{Effect of specificity of vaccination status measurement ($s_{p,v}$)}
+
+Variation of this parameter affected both surveillance and administrative estimates of VE - they are more biased with at lower values. This effect was most pronounced in children and least so in elderly. The reason for this is the fact that children had the lowest vaccinated proportion. As a result, they had the lowest number of true vaccinated cases and non-cases to which exposure misclassification would add subjects who were truly unvaccinated but classified as vaccinated. Since the true numbers in children were low, this misclassification had a greater impact on VE estimate bias than it did in the other groups.
+
+\pagebreak
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.75\linewidth]{../fig-agesind/agesind-spec_vac.pdf}
+		\caption{
+Effect of changing $s_{p,v}$ in different populations. All were simulated inidvidually. The dotted line is the true value. \label{fig:agesind-spv}
+		}
+\end{figure}
+
+%%
+\subsubsection{Effect of influenza test specificity ($s_p$) and influenza incidence ($f$)}
+
+Variation of $s_p$ affected both surveillance and administrative estimates of VE --- they are more biased with at lower values. This effect was most pronounced in administrative data in the elderly as shown in Figure \ref{fig:agesind-spf}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.75\linewidth]{../fig-agesind/agesind-spec_flu.pdf}
+		\caption{
+Effect of changing $s_p$ in different populations. All were simulated inidvidually. Dashed line is the true value. \label{fig:agesind-spf}
+		}
+\end{figure}
+
+Administrative data appears to be more sensitive to outcome misclassification. The effect is most obvious in the elderly due to them having the lowest $f$. To show this, the expected proportions are shown in Table \ref{SFexplanationMath}. Eq. \ref{EqSFORA} and \ref{EqSFORAll} show expected ORs in surveillance and administrative data. Figure \ref{SFIPfGraph} graphs both equations at various values of $s_p$ and $f$.
+
+\pagebreak
+
+\begin{table}[h]
+\centering
+\caption{
+Expected proportions in a population. Shown for ARI and non-ARI subjects separately. Surveillance sample would only contain ARI subjects, administrative would contain everyone. $T_p$ - tested as flu-infected, $T_n$ - tested as uninfected $V$ - vaccinated, $A$ - ARI.
+Assumptions: no misclassification other than $s_p$, $t_a$= 1, $t_n$= 1
+\label{SFexplanationMath} 
+}
+	\input{../tab-math/spec_flu.tex}
+\end{table}
+
+\begin{equation} \label{EqSFORA}
+OR_{\text{surveillance}} = \frac{f(1-e)+l(1-s)}{f+l(1-s)}
+\end{equation}
+
+\begin{equation} \label{EqSFORAll}
+OR_{\text{administrative}} = \frac{\Big(1-s(1-f(1-e))\Big)\Big(s(1-f)\Big)}{\Big(1-s(1-f)\Big)\Big(s(1-f(1-e))\Big)}
+\end{equation}
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.75\linewidth]{../fig-sfinv/sfinv.pdf}
+		\caption{
+The impact of flu incidence and specificity. $s_p$ was graphed at $f$ of 0.1; $f$ was graphed at $s_p$ of 0.95. Both had true VE ($e$) set to 0.5 and $l$ to 0.15. \label{SFIPfGraph}
+		}
+\end{figure}
+
+It can be seen from the figure that  decrease in either parameter leads to bias towards the null (1). Additionally, administrative data is affected to a greater extent than surveillance. This agrees with the simulations where $s_p$ was seen to affect administrative data more so than surveillance and the greatest impact was seen in elderly who had the lowest $f$.
+
+The biasing effect of high $f$ can be seen as a result of violating the rare disease assumption. In absence of miscalssification this would introduce bias away from the null in administrative data while surveillance data would remain unbiased. However, administrative data also appears to be more susceptible to outcome miscalssification. So at any value of $f$ in absence of miscalssification, administrative data will be biased away from the null, while in presence of outcome misclassification (particularly imperfect specificity) it will be more biased towards the null due to its higher susceptibility to miscalssification. This can be seen in the cross-over of lines in the $s_p$ panel of Figure \ref{SFIPfGraph}.
+
+\pagebreak
+
+%%
+\subsubsection{Effect of sensitivities ($s_{e,v}$ and $s_e$)}
+%%
+
+Variation of these parameters within the plausible range had little effect of both surveillance and administrative estimates in every group --- they are slightly more biased with at lower values as shown in Figures \ref{agesind-sev} and \ref{agesind-spv}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.75\linewidth]{../fig-agesind/agesind-sens_vac.pdf}
+		\caption{
+Effect of changing $s_{e,v}$ in different populations. All were simulated inidvidually. The dotted line is the true value. \label{agesind-sev}
+		}
+		\includegraphics[width=0.75\linewidth]{../fig-agesind/agesind-sens_flu.pdf}
+		\caption{
+Effect of changing $s_e$ in different populations. All were simulated inidvidually. The dotted line is the true value. \label{agesind-spv}
+		}
+\end{figure}
+
 
 \pagebreak
 \thispagestyle{plain}
