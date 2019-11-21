@@ -421,7 +421,37 @@ OR_{1 2 3} = \frac
 {\sum_{i=1}^3 (1-v_i) \Big[ v_1h_v+l \sum_{i=1}^3 v_i \Big]}
 \end{equation}
 
-The issue comes from the fact that group 1 can contribute different counts to numerator and denominator and therefore make the OR swing in either direction. Figure \ref{ORbadVGraph} demonstrates how the vaccinated proportion in subgroup 1 can affect the overall OR.
+The issue comes from the fact that group 1 can contribute different counts to numerator and denominator and therefore make the OR swing in either direction. Figure \ref{fig:ortn} demonstrates how the vaccinated proportion in subgroup 1 can affect the overall OR.
+
+\pagebreak
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.75\linewidth]{../fig-ortn/fig-ortn.pdf}
+		\caption{
+The impact of the vaccinated proportion in subgroup 1 on the OR of the overall population. Vaccinated proportions in the other groups are 0.5. Flu incidence is 0.025 in vaccinated and 0.05 in unvaccinated so that true OR and true VE are both 0.5. Non-flu incidence is 0.1. Dashed line is the true value. Dash-dotted line is drawn at OR of 1 (VE of 0). \label{fig:ortn}
+		}
+\end{figure}
+
+At higher values of vaccinated proportion, the population OR becomes smaller leading to overestimation of VE. At lower values of vaccinated proportion, the population OR becomes larger leading to underestimation of VE.
+
+This is the primary reason why the overall population administrative VE estimates went up so much in simulation results when elderly were the only group to have a non-0 $t_n$ and why they went down when children were the only group to have a non-0 $t_n$. Elderly have a high vaccinated proportion (0.66) which is why they mostly contributed their numbers to the denominator of OR which decreased OR and increased VE estimates in the overall group. Children have a low vaccinated proportion (0.11) which is why they mainly contributed to the numerator of OR which increased OR and decreased the overall VE estimate. 
+
+The overall population administrative VE estimates were not as greatly affected when adults were the only group with a non-0 $t_n$. Adults had a $v$ value of 0.25 meaning that their impact was the same as children's (VE estimates decreased) but it was not as pronounced since the additional contribution by adults was more balanced between the numerator and the denominator of the overall population OR.
+
+\pagebreak
+%%
+\subsubsection{Effect of $f$ and $v$}
+
+Both the administrative and the surveillance VE estimates became greatly biased towards the null when the incidence of flu was set high in the elderly as shown in Figure \ref{fig:agesmult-pflu}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\linewidth]{../fig-agesmult/agesmult-pflu.pdf}
+		\caption{
+Effect of changing $f$ in a population with multiple groups. Dashed line is the true value. Dotted line is drawn at VE estimate of 0. The three panels on the left show group-specific VE estimates. The right-most panel shows the VE estimates calculated from the whole sample ignoring age. Numbers correspond to parameter combinations shown in Table \ref{TabComb}. Both surveillance and administrative overall estimates under combination 6 (elderly high) are more biased than under other combinations. \label{fig:agesmult-pflu}
+		}
+\end{figure}
 
 \pagebreak
 \thispagestyle{plain}
