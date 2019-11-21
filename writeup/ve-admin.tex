@@ -92,9 +92,9 @@
 %%
 \subsection{Core simulation}
 
-Starting population was the general population. Its size was set to 500,000. Every individual had their attributes randomly allocated in the order shown in Figure \ref{SimDiag} and with probabilities shown in tables below.
+The size of the starting population was set to 500,000. Every individual had their attributes randomly allocated in the order shown in Figure \ref{SimDiag} and with probabilities shown in Tables \ref{TabParKey}, \ref{TabComb} and \ref{AddSim}.
 
-First allocated attribute was true vaccination status. Measurement of this status for the purposes of the simulated study was allowed to be inaccurate in order to simulate exposure miscalssification. True vaccination status was used to determine which probability to use to allocate individuals to the flu-infected category. Both vaccinated and unvaccinated subjects were allocated to the non-flu infected category with the same probability. The remaining subjects ended up as part of the non-ARI category.
+True vaccination status was allocated. Measurement of this status for the purposes of the simulated study was allowed to be inaccurate in order to simulate exposure miscalssification. True vaccination status was used to determine which probability to use to allocate individuals to the flu-infected category. Both vaccinated and unvaccinated subjects were allocated to the non-flu infected category with the same probability. The remaining subjects ended up as part of the non-ARI category.
 
 Everyone with an ARI (either infected with flu or a non-flu pathogen) was assigned to either the symptomatic or the asymptomatic group. Those who were symptomatic were assigned to the clinically assessed or unassessed groups. Being clinically assessed in this context means that they presented to a clinic with ARI illness and they were classified as an ARI case. These clinically assessed ARI cases got one probability of being tested, everyone else got another. Tests were allowed to be imperfect to simulate outcome misclassification.
 
@@ -111,7 +111,7 @@ Assignment of an individual to appropriate categories. A - administrative, S - s
 		}
 \end{figure}
 
-Individuals in each of the categories were counted. These counts were representative of those that could have been obtained if a test-negative study was done on that population either using administrative or surveillance data. VE estimates could then be calculated as 1 - OR where OR = $\frac{\text{Odds in vaccinated}}{\text{Odds in unvaccinated}}$ where Odds = $\frac{\text{Count of cases}}{\text{Count of controls}}$.
+Individuals in each of the categories were counted. These counts were representative of those that could have been obtained if a test-negative study was conducted on the population either using administrative or surveillance data. VE estimates could then be calculated as 1 - OR where OR = $\frac{\text{Odds in vaccinated}}{\text{Odds in unvaccinated}}$ where Odds = $\frac{\text{Count of cases}}{\text{Count of controls}}$.
 
 \pagebreak
 
@@ -119,7 +119,7 @@ Individuals in each of the categories were counted. These counts were representa
 	\centering
 		\input{../sim-diag/sim-diag.tex}
 		\caption{
-Simulation decision tree. Parameter key is in Table \ref{TabParKey}. Solid lines mean allocation with probabilities represented by the indicated parameters. Dashed line probabilities are complements of corresponding solid line probabilities. Dotted lines represent full-group allocation. Probability of being flu-infected for those who are tested isn't indicated because it wasn't necessary for the purposes of simulations. \label{SimDiag}
+Simulation decision tree. $v$ --- vaccination probability, $s_{e,v}$ --- sensitivity of vaccination record, $s_{p,v}$ --- specificity of vaccination record, $l$ --- probability of nonflu infection, $f$ --- probability of flu infection, $e$ --- vaccine effectiveness, $p$ --- probability of infection being symptomatic, $c$ --- probability of symptomatic infection being clinically assessed, $t_a$ --- probability of clinically assessed infection being tested for flu, $t_n$ --- probablity of unassessed symptomatic infection, asymptomatic infection and no infection being tested for flu, $s_e$ --- sensitivity of flu test, $s_p$ --- specificity of flu test. Full parameter key is in Table \ref{TabParKey}. Solid lines mean allocation with probabilities represented by the indicated parameters. Dashed line probabilities are complements of corresponding solid line probabilities. Dotted lines represent full-group allocation. Probability of being flu-infected for those who are tested isn't indicated because it wasn't necessary for the purposes of simulations. \label{SimDiag}
 		}
 \end{figure}
 
@@ -192,11 +192,11 @@ Changing $t_a$ (test probability for those with clinically assessed ARI) and $t_
 	\centering
 		\includegraphics[width=.75\linewidth]{../fig-agesind/agesind-test_clin.pdf}
 		\caption{
-Effect of changing $t_a$ in different populations. All groups were simulated individually. The dotted line is the true value. \label{agesind-ta}
+Effect of changing $t_a$ (test probability for those with clinically assessed ARI) in different populations. All groups were simulated individually. The dotted line is the true value. The solid line is the estimated VE in administrative data, the dashed line is the estimated VE in surveillance data. Points correspond to values at which the simulations were conducted. \label{agesind-ta}
 		}
 		\includegraphics[width=.75\linewidth]{../fig-agesind/agesind-test_nonclin.pdf}
 		\caption{
-Effect of changing $t_n$ in different populations. All were simulated inidvidually. The dotted line is the true value. \label{agesind-tn}
+Effect of changing $t_n$ (test probability for those with no infection, asymptomatic infection and not clinically assessed symptomatic infection) in different populations. All were simulated inidvidually. The dotted line is the true value. The solid line is the estimated VE in administrative data, the dashed line is the estimated VE in surveillance data. Points correspond to values at which the simulations were conducted. \label{agesind-tn}
 		}
 \end{figure}
 
@@ -281,14 +281,14 @@ For a given value of $e$, the bias is proportional to $1 - \frac{v}{s_{p,v}(v-1)
 
 The overall effect of true VE is such that as long as there is imperfect vaccination status measurement specificity, higher values of it will result in greater bias and this bias will be affected by vaccinated proportion - the smaller the proportion the greater the bias. 
 
-Other misclassification types can allow true VE to introduce bias as well but simulation results showed that it would not be as prominent as the one discussed above (associated with $s_{p,v}$), and it would not depend on vaccinated proportion which is why it would not explain the differences between age groups in Figure \ref{agesind-ve}. Effect of other types of misclassification will be discussed in their own sections.
+Other misclassification types can allow higher values of true VE to introduce bias as well but simulation results showed that it would not be as prominent as the one discussed above (associated with $s_{p,v}$), and it would not depend on vaccinated proportion which is why it would not explain the differences between age groups in Figure \ref{agesind-ve}. Effect of other types of misclassification will be discussed in their own sections.
 
 Since miscalssification can always be expected, highly efficacious vaccines are likely to be underestimated to a greater degree than less efficacious vaccines, especially so when only a small proportion of the population is vaccinated.
 
 %%
 \subsubsection{Effect of specificity of vaccination status measurement ($s_{p,v}$)}
 
-Variation of this parameter affected both surveillance and administrative estimates of VE - they are more biased with at lower values. This effect was most pronounced in children and least so in elderly. The reason for this is the fact that children had the lowest vaccinated proportion. As a result, they had the lowest number of true vaccinated cases and non-cases to which exposure misclassification would add subjects who were truly unvaccinated but classified as vaccinated. Since the true numbers in children were low, this misclassification had a greater impact on VE estimate bias than it did in the other groups.
+Variation of this parameter affected both surveillance and administrative estimates of VE --- they are more biased at lower values of specificity of vaccination status measurement. This effect was most pronounced in children and least so in the elderly. The reason for this is the fact that children had the lowest vaccinated proportion. As a result, they had the lowest number of true vaccinated cases and non-cases to which exposure misclassification would add subjects who were truly unvaccinated but classified as vaccinated. Since the true numbers in children were low, this misclassification had a greater impact on VE estimate bias than it did in the other groups.
 
 \pagebreak
 
@@ -303,7 +303,7 @@ Effect of changing $s_{p,v}$ in different populations. All were simulated inidvi
 %%
 \subsubsection{Effect of influenza test specificity ($s_p$) and influenza incidence ($f$)}
 
-Variation of $s_p$ affected both surveillance and administrative estimates of VE --- they are more biased with at lower values. This effect was most pronounced in administrative data in the elderly as shown in Figure \ref{fig:agesind-spf}.
+Variation of $s_p$ affected both surveillance and administrative estimates of VE --- they are more biased at lower values. This effect was most pronounced in administrative data in the elderly as shown in Figure \ref{fig:agesind-spf}.
 
 \begin{figure}[h]
 	\centering
@@ -452,6 +452,59 @@ Both the administrative and the surveillance VE estimates became greatly biased 
 Effect of changing $f$ in a population with multiple groups. Dashed line is the true value. Dotted line is drawn at VE estimate of 0. The three panels on the left show group-specific VE estimates. The right-most panel shows the VE estimates calculated from the whole sample ignoring age. Numbers correspond to parameter combinations shown in Table \ref{TabComb}. Both surveillance and administrative overall estimates under combination 6 (elderly high) are more biased than under other combinations. \label{fig:agesmult-pflu}
 		}
 \end{figure}
+
+The general trend is that the overall VE estimate becomes more biased if there is a group in the population whose flu incidence and vaccinated proportion are both greatly different from the other groups.
+
+To illustrate, let's say there is a population with three groups. Flu incidence and vaccinated proportion are the same in groups 2 and 3. Table \ref{tab:fvcounts} shows expected counts for surveillance data. 
+
+\begin{table}[h]
+\centering
+\caption{
+Expected proportions in surveillance data in a population with 3 groups. Last row is the overall counts. 
+Assumptions: no miscalssification, the same number of people in all groups, the save vaccinated proportion and flu incidence in groups 2 and 3, everyone eligible is part of the study. \label{tab:fvcounts}
+}
+	\input{../tab-math/pflu_pvac-counts.tex}
+\end{table}
+
+\begin{equation} \label{ORIPfPv}
+OR_{123}=(1-e)\frac{(v_1f_1+2vf)(1-v_1+2(1-v))}{[(1-v_1)f_1+2(1-v)f](v_1+2v)}
+\end{equation}
+
+The bias in the overall OR will only be present if both $v_1$ and $f_1$ are different from $v$ and $f$. Meaninng that the group of interest has to have its flu incidence and vaccinated proportion be different from the other groups in order of this biasing effect to occur. Figure \ref{fig:fvinv} shows the bias for different $v_1$ and $f_1$. Eq. \ref{IPPVEfIP} and \ref{IPPVEFPV} show that this biasing effect disappears when $f_1$ or $v_1$ are set to $f$ or $v$ respectively.
+
+\begin{equation} \label{IPPVEfIP}
+\begin{aligned}
+OR_{123}&=(1-e)\frac{(v_1f+2vf)(1-v_1+2(1-v))}{[(1-v_1)f+2(1-v)f](v_1+2v)} \\
+&=(1-e)\frac{(v_1+2v)(1-v_1+2(1-v))}{[1-v_1+2(1-v)](v_1+2v)} \\
+&=1-e
+\end{aligned}
+\end{equation}
+
+\begin{equation} \label{IPPVEFPV}
+\begin{aligned}
+OR_{123}&=(1-e)\frac{(vf_1+2vf_1)(1-v+2(1-v))}{[(1-v)f_1+2(1-v)f_1](v+2v)} \\
+&=(1-e)\frac{3[1-v+2(1-v)]}{3[(1-v)+2(1-v)]} \\
+&=1-e
+\end{aligned}
+\end{equation} 
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\linewidth]{../fig-fvinv//fig-fvinv.pdf}
+		\caption{
+Bias at different values of $v_1$ and $f_1$. Shown as relative values, that is $\frac{f1}{f}$ and $\frac{v1}{v}$. Solid lines show where the bias is 0 - at relative values of 1, meaning that $f1$ and $v_1$ are the same as $f$ and $v$. \label{fig:fvinv}
+		}
+\end{figure}
+
+\pagebreak
+%
+\section{Conclusion}
+
+VE estimates coming from administrative data can be expected to be more biased towards the null as compared to VE estimates of surveillance data. This is mainly due to the fact that administrative data is more susceptible to bias introduced by imperfect specificity of outcome (flu) classification. However, As long as administrative data does not contain a large amount of subjects without ARI the amount of extra bias will be small (``extra'' as compared to surveillance data).
+
+Other sources of bias affect surveillance and administrative data to a similar extent. The most prominent are true VE and specificity of vaccination status measurement. Both high true VE and low specificity will introduce bias towards the null. 
+
+Due to the fact that various parameters vary with age (e.g. vaccination status, vaccine effectiveness, flu incidence) when multiple age groups are present in the sample, many different parameter combinations are possible across the groups. Many of them will not have a great effect on the age-unadjusted overall VE estimate (i.e. it will lie in range of the age-specific estimates) but certain parameter combinations will introduce a great amount of bias to the overall estimate. As the behaviour of the unadjusted estimate is difficult to predict, it is unreliable with both surveillance and administrative data.
 
 \pagebreak
 \thispagestyle{plain}
