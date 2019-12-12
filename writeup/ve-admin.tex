@@ -207,9 +207,9 @@ The reason why only administrative data is affected is the fact that when $t_a$ 
 The reason why no additional simulation replicated the pattern in Figure \ref{agesind-tn} is likely the fact that additional simulations only allowed one parameter other than $t_n$ to introduce bias. The pattern seen is likely a result of multiple parameters other than $t_n$ introducing bias. Hence no additional simulation set had enough ``accumulated'' bias to replicate the pattern closely.
 
 %%
-\subsubsection{Effect of true vaccine effectiveness ($e$)}
+\subsubsection{Effect of true vaccine effectiveness ($e$) and coverage $v$}
 
-Variation of the parameter affected both surveillance and administrative estimates of VE --- they were more biased with higher true VE values, especially so in children as shown in Figure \ref{agesind-ve}.
+Variation of true vaccine effectiveness $e$ affected both surveillance and administrative estimates of VE --- they were more biased with higher true VE values, especially so in children as shown in Figure \ref{agesind-ve}.
 
 \begin{figure}[h]
 	\centering
@@ -219,7 +219,7 @@ Effect of changing $e$ in different populations. All were simulated individually
 		}
 \end{figure}
 
-The parameter responsible for the greater bias in children was most likely the vaccinated proportion $v$ as children had it set to the lowest value of the three groups. Since the additional simulations that had low $v$ did not have the pattern replicated, it is likely that low $v$ increases bias at high $e$ only in presence of misclassification. This was confirmed when more simulations were run where $e$ and $v$ were both varied in different misclassification settings. Results in Figure \ref{veinv-summ} showed that the pattern is only replicated with low $v$ and non-one $s_{p,v}$.
+The parameter responsible for the greater bias in children was most likely the vaccinated proportion $v$ as children had it set to the lowest value of the three groups. Since the additional simulations that had low $v$ did not have the pattern replicated, it is likely that low $v$ increases bias at high $e$ only in presence of misclassification. This was confirmed when more simulations were run where $e$ and $v$ were both varied in different misclassification settings. Results in Figure \ref{veinv-summ} showed that the pattern is only replicated with low $v$ and non-one $s_{p,v}$. Figure \ref{agesind-pvac} shows that at vaccine coverage of 50\% all groups have similar bias in VE estimates (around 10\%).
 
 \pagebreak
 
@@ -229,6 +229,14 @@ The parameter responsible for the greater bias in children was most likely the v
 		\caption{
 The effect of changing both $e$ and $v$ while also allowing for misclassification. The other parameters were set to values shown in Table \ref{AddSim}. The dotted line is the true value. The solid line is the estimated VE in administrative data, the dashed line is the estimated VE in surveillance data. Points correspond to values at which the simulations were conducted.  The only misclassification setting shown is decreased $s_{p,v}$. The other settings (decreased $s_{e,v}$,  $s_p$, $s_e$) produced results similar to those of no misclassification. \label{veinv-summ}
 		}	
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.75\linewidth]{../fig-agesind/agesind-pvac.pdf}
+		\caption{
+Effect of changing $v$ in different populations. All were simulated individually. The dotted line is the true value. The dash-dotted line is drawn at VE estimate of 0. The solid line is the estimated VE in administrative data, the dashed line is the estimated VE in surveillance data. Points correspond to values at which the simulations were conducted.  \label{agesind-pvac}
+		}
 \end{figure}
 
 The fact that in absence of misclassification neither vaccine effectiveness nor vaccinated proportion will be expected to have an effect on the bias of a test-negative odds ratio can be shown in Table \ref{tab:veinv1} and Eq.\ \ref{eq:veinv1}.
@@ -285,12 +293,11 @@ Other misclassification types can allow higher values of true VE to introduce bi
 
 Since misclassification can always be expected, highly efficacious vaccines are likely to be underestimated to a greater degree than less efficacious vaccines, especially so when only a small proportion of the population is vaccinated.
 
+\pagebreak
 %%
 \subsubsection{Effect of specificity of vaccination status measurement ($s_{p,v}$)}
 
 Variation of this parameter affected both surveillance and administrative estimates of VE --- they are more biased at lower values of specificity of vaccination status measurement. This effect was most pronounced in children and least so in the elderly. The reason for this is the fact that children had the lowest vaccinated proportion. As a result, they had the lowest number of true vaccinated cases and non-cases to which exposure misclassification would add subjects who were truly unvaccinated but classified as vaccinated. Since the true numbers in children were low, this misclassification had a greater impact on VE estimate bias than it did in the other groups.
-
-\pagebreak
 
 \begin{figure}[h]
 	\centering
@@ -314,8 +321,6 @@ Effect of changing $s_p$ in different populations. All were simulated individual
 \end{figure}
 
 Administrative data appears to be more sensitive to outcome misclassification. The effect is most obvious in the elderly due to them having the lowest $f$. To show this, the expected proportions are shown in Table \ref{SFexplanationMath}. Eq. \ref{EqSFORA} and \ref{EqSFORAll} show expected ORs in surveillance and administrative data. Figure \ref{SFIPfGraph} graphs both equations at various values of $s_p$ and $f$.
-
-\pagebreak
 
 \begin{table}[h]
 \centering
