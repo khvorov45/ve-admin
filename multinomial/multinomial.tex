@@ -1,0 +1,166 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Why you need a multinomial roll for infection status},
+  pdfauthor={Arseniy Khvorov},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+
+\title{Why you need a multinomial roll for infection status}
+\author{Arseniy Khvorov}
+\date{11/12/2019}
+
+\begin{document}
+\maketitle
+
+\hypertarget{how-its-supposed-to-work}{%
+\section{How it's supposed to work}\label{how-its-supposed-to-work}}
+
+\(F\) --- infected with flu\\
+\(L\) --- infected with non-flu\\
+\(V\) --- vaccinated\\
+\(U\) --- unvaccinated\\
+\(e\) --- vaccine effectiveness
+
+\[
+\begin{gathered}
+P(F) = f \\
+P(L) = l \\
+P(V) = v \\
+P(U) = 1 - v = u \\
+P(F,V) = vf(1-e) \\
+P(F,U) = uf \\
+P(L,V) = vl \\
+P(L,U) = ul \\
+OR = \frac{P(F,V)P(L,U)}{P(F,U)P(L,V)}=\frac{vf(1-e)ul}{ufvl}=1-e
+\end{gathered}
+\]
+
+\hypertarget{how-it-works-with-a-multinomial-roll}{%
+\section{How it works with a multinomial roll}\label{how-it-works-with-a-multinomial-roll}}
+
+\[
+\begin{gathered}
+P(F|V) = f(1-e) \\
+P(F|U) = f \\
+P(L|V) = l \\
+P(L|U) = l \\
+P(F,V) = P(F|V)P(V) = vf(1-e) \\
+P(F,U) = P(F|U)P(U) = uf \\
+P(L,V) = P(L|V)P(V) = vl \\
+P(L,U) = P(L|U)P(U) = ul \\
+OR = \frac{P(F,V)P(L,U)}{P(F,U)P(L,V)}=\frac{vf(1-e)ul}{ufvl}=1-e
+\end{gathered}
+\]
+
+It works exaclty how it's supposed to.
+
+\hypertarget{how-it-works-with-a-sequential-roll}{%
+\section{How it works with a sequential roll}\label{how-it-works-with-a-sequential-roll}}
+
+If the first roll works out flu infection and the second roll (non-flu infection) only applies to those not infected with flu, then
+
+\[
+\begin{gathered}
+P(F|V) = f(1-e) \\
+P(F|U) = f \\
+P(L|V) = l(1 - f(1 - e)) \\
+P(L|U) = l(1-f) \\
+P(F,V) = P(F|V)P(V) = vf(1-e) \\
+P(F,U) = P(F|U)P(U) = uf \\
+P(L,V) = P(L|V)P(V) = vl(1 - f(1 - e)) \\
+P(L,U) = P(L|U)P(U) = ul(1-f) \\
+OR = \frac{P(F,V)P(L,U)}{P(F,U)P(L,V)}=\frac{vf(1-e)ul(1-f)}{ufvl(1 - f(1 - e))} = (1-e)\frac{1-f}{1-f(1-e)}
+\end{gathered}
+\]
+
+The OR is biased.
+
+Note that the ``central assumption'' is that \(P(L|V) = P(L|U)\) and with a sequential roll
+
+\[
+\begin{gathered}
+P(L|V) = l(1 - f(1 - e)) \\
+P(L|U) = l(1-f)
+\end{gathered}
+\]
+
+the assumption is violated (unless \(e=0\)), in fact, vaccination increases the probability of non-flu (since \(f(1 - e) \leq f\)).
+
+Also note that the total proportion infected with non-flu is
+
+\[
+\begin{aligned}
+P(L,V) + P(L,U) &= vl(1 - f(1 - e)) + ul(1-f) \\  
+&= l(v - vf(1-e) + (1-v)(1-f)) \\
+&= l(v - vf(1-e) + 1 - f -v + vf) \\
+&= l(vfe + 1 - f)
+\end{aligned}
+\]
+
+is not \(l\) and the expected number of people infected with non-flu is not \(Nl\) where \(N\) is the total population size.
+
+\end{document}
